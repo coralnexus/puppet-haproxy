@@ -1,9 +1,9 @@
 # Class: haproxy
 #
-#   This module manages the HAProxy service.
+#   This module manages the HAProxy server.
 #
-#   Adrian Webb <adrian.webb@coraltech.net>
-#   2012-05-22
+#   Adrian Webb <adrian.webb@coralnexus.com>
+#   2013-05-07
 #
 #   Tested platforms:
 #    - Ubuntu 12.04
@@ -12,63 +12,13 @@
 #
 # Actions:
 #
-#  Installs, configures, and manages the HAProxy service.
+#  Installs, configures, and manages the HAProxy server.
 #
 # Requires:
 #
 # Sample Usage:
 #
-#   $server_settings = [
-#     'check',
-#     [ 'port', 9200 ],
-#     [ 'inter', 12000 ],
-#     [ 'rise', 3 ],
-#     [ 'fall', 3 ],
-#     'backup',
-#   ]
-#
-#   $proxy_options = {
-#     'httpchk' => [ ],
-#   }
-#
-#   $servers = {
-#     'percona1'   => {
-#       'ip'       => 192.168.70.2,
-#       'port'     => 3306,
-#       'settings' => $server_settings,
-#     },
-#     'percona2'   => {
-#       'ip'       => 192.168.70.3,
-#       'port'     => 3306,
-#       'settings' => $server_settings,
-#     },
-#     'percona3'   => {
-#       'ip'       => 192.168.70.4,
-#       'port'     => 3306,
-#       'settings' => $server_settings,
-#     },
-#   }
-#
-#   $proxies = {
-#     'cluster-writes' => {
-#       'port'         => 43555,
-#       'mode'         => 'tcp',
-#       'balance'      => 'leastconn',
-#       'options'      => $proxy_options,
-#       'servers'      => $servers,
-#     },
-#     'cluster-reads' => {
-#       'port'        => 43570,
-#       'mode'        => 'tcp',
-#       'balance'     => 'leastconn',
-#       'options'     => $proxy_options,
-#       'servers'     => $servers,
-#     },
-#   }
-#
-#   class { 'haproxy':
-#     proxies => $proxies,
-#   }
+#   include haproxy
 #
 class haproxy inherits haproxy::params {
 
