@@ -21,7 +21,7 @@ This function returns the firewall rules (port / label) needed for a given proxy
       
       address_pattern = /^\s*(.+)\s*\:\s*([\d\-]+)\s*$/
       
-      parse_attributes = lambda do |data, active = false|
+      parse_attributes = lambda do |data, active|
         data.each do |name, item|
           local_active = active
           inner        = true
@@ -66,7 +66,7 @@ This function returns the firewall rules (port / label) needed for a given proxy
       config.each do |type, collection|
         unless type == 'global' || type == 'defaults'
           if collection.is_a?(Hash)
-            parse_attributes.call(collection)            
+            parse_attributes.call(collection, false)            
           end
         end
       end
