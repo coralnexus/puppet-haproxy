@@ -70,102 +70,94 @@
 #     proxies => $proxies,
 #   }
 #
-# [Remember: No empty lines between comments and class definition]
-class haproxy (
+class haproxy inherits haproxy::params {
 
-  $package                 = $haproxy::params::package,
-  $package_ensure          = $haproxy::params::package_ensure,
-  $service                 = $haproxy::params::service,
-  $service_ensure          = $haproxy::params::service_ensure,
-  $config                  = $haproxy::params::config,
-  $config_template         = $haproxy::params::config_template,
-  $default_config          = $haproxy::params::default_config,
-  $default_config_template = $haproxy::params::default_config_template,
-  $configure_firewall      = $haproxy::params::configure_firewall,
-  $chroot_dir              = $haproxy::params::chroot_dir,
-  $user                    = $haproxy::params::user,
-  $group                   = $haproxy::params::group,
-  $node                    = $haproxy::params::node,
-  $haproxy_debug           = $haproxy::params::debug,
-  $haproxy_quiet           = $haproxy::params::quiet,
-  $max_connections         = $haproxy::params::max_connections,
-  $default_mode            = $haproxy::params::default_mode,
-  $default_retries         = $haproxy::params::default_retries,
-  $default_max_connections = $haproxy::params::default_max_connections,
-  $default_options         = $haproxy::params::default_options,
-  $default_timeouts        = $haproxy::params::default_timeouts,
-  $proxies                 = $haproxy::params::proxies,
-
-) inherits haproxy::params {
-
-  $proxy_ports             = proxy_ports($proxies)
+  $base_name = $haproxy::params::base_name
 
   #-----------------------------------------------------------------------------
   # Installation
 
-  if ! ( $package and $package_ensure ) {
-    fail('HAProxy package name and ensure value must be defined')
-  }
-  package { 'haproxy':
-    name   => $package,
-    ensure => $package_ensure,
+  coral::package { $base_name:
+    resources => {
+      build_packages  => {
+        name => $haproxy::params::build_package_names
+      },
+      common_packages => {
+        name    => $haproxy::params::common_package_names,
+        require => 'build_packages'
+      },
+      extra_packages  => {
+        name    => $haproxy::params::extra_package_names,
+        require => 'common_packages'
+      }
+    },
+    defaults  => {
+      ensure => $haproxy::params::package_ensure
+    }
   }
 
   #-----------------------------------------------------------------------------
   # Configuration
 
-  if $configure_firewall == 'true' and $proxy_ports {
-    haproxy::rule { $proxy_ports: }
+  $config = $haproxy::params::config
+
+  #---
+
+  coral::file { $base_name:
+    resources => {
+      chroot_dir => {
+        path   => $haproxy::params::chroot_dir,
+        ensure => directory,
+        owner  => $haproxy::params::user,
+        group  => $haproxy::params::group,
+      },
+      default_config => {
+        path    => $haproxy::params::default_config_file,
+        content => render($haproxy::params::env_template, $haproxy::params::default_config)
+      },
+      config => {
+        path    => $haproxy::params::config_file,
+        content => render($haproxy::params::config_template, $config)
+      }
+    },
+    defaults => {
+      notify => Service["${base_name}_service"]
+    }
   }
 
-  file { 'haproxy-config':
-    path    => $config,
-    content => template($config_template),
-    require => Package['haproxy'],
-    notify  => Service['haproxy'],
+  #---
+
+  coral::firewall { $base_name:
+    resources => haproxy_firewall($config, 'INPUT Allow HAProxy connections'),
+    defaults  => {
+      action => 'accept',
+      chain  => 'INPUT',
+      state  => 'NEW',
+      proto  => 'tcp'
+    }
   }
 
-  file { 'haproxy-default-config':
-    path    => $default_config,
-    content => template($default_config_template),
-    require => File['haproxy-config'],
-    notify  => Service['haproxy'],
-  }
+  #-----------------------------------------------------------------------------
+  # Actions
 
-  file { 'haproxy-chroot-dir':
-    path    => $chroot_dir,
-    ensure  => directory,
-    owner   => $user,
-    group   => $group,
-    require => Package['haproxy'],
-  }
+  coral::exec { $base_name: }
 
   #-----------------------------------------------------------------------------
   # Services
 
-  service { 'haproxy':
-    name    => $service,
-    ensure  => $service_ensure,
-    require => File['haproxy-chroot-dir'],
+  coral::service { $base_name:
+    resources => {
+      service => {
+        name   => $haproxy::params::service_name,
+        ensure => $haproxy::params::service_ensure
+      }
+    },
+    require => [ Coral::Package[$base_name], Coral::File[$base_name] ]
+  }
+
+  #---
+
+  coral::cron { $base_name:
+    require => Coral::Service[$base_name]
   }
 }
-
-#-------------------------------------------------------------------------------
-
-define haproxy::rule( $port = $name ) {
-
-  $rule_description = "200 INPUT Allow HAProxy connections: $port"
-
-  #-----------------------------------------------------------------------------
-
-  if $port and ! defined(Firewall[$rule_description]) {
-    firewall { $rule_description:
-      action => accept,
-      chain  => 'INPUT',
-      state  => 'NEW',
-      proto  => 'tcp',
-      dport  => $port,
-    }
-  }
-}
-
