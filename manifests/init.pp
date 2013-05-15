@@ -99,7 +99,8 @@ class haproxy inherits haproxy::params {
     resources => {
       service => {
         name   => $haproxy::params::service_name,
-        ensure => $haproxy::params::service_ensure
+        ensure => $haproxy::params::service_ensure,
+        enable => true
       }
     },
     require => [ Coral::Package[$base_name], Coral::File[$base_name] ]
