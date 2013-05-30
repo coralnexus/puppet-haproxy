@@ -55,6 +55,9 @@ class haproxy::params inherits haproxy::default {
     }
   })
 
+  $user  = interpolate($config['global']['user'], $config['global'])
+  $group = interpolate($config['global']['group'], $config['global'])
+
   #---
 
   $env_template        = module_param('env_template', 'Environment')
