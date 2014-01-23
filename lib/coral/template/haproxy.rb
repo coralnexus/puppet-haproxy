@@ -1,7 +1,7 @@
 
 module Coral
 module Template
-class HAProxyConf < Plugin::Template
+class Haproxy < Plugin::Template
   
   #-----------------------------------------------------------------------------
   # Renderers  

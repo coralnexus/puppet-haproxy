@@ -13,7 +13,7 @@ class haproxy::params inherits haproxy::default {
   #---
 
   $config_file     = module_param('config_file')
-  $config_template = module_param('config_template', 'HAProxyConf')
+  $config_template = module_param('config_template', 'haproxy')
 
   $chroot_dir  = module_param('chroot_dir')
 
@@ -60,7 +60,7 @@ class haproxy::params inherits haproxy::default {
 
   #---
 
-  $env_template        = module_param('env_template', 'Environment')
+  $env_template        = module_param('env_template', 'environment')
   $default_config_file = module_param('default_config_file')
   $default_config      = module_hash('default_config', {
     'ENABLED'   => ensure(haproxy_firewall($config), '1', '0'),
