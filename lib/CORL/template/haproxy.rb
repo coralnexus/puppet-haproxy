@@ -1,7 +1,7 @@
 
-module Coral
+module CORL
 module Template
-class Haproxy < Plugin::Template
+class Haproxy < CORL.plugin_class(:template)
   
   #-----------------------------------------------------------------------------
   # Renderers  

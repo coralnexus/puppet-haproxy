@@ -27,7 +27,7 @@ class haproxy inherits haproxy::params {
   #-----------------------------------------------------------------------------
   # Installation
 
-  coral::package { $base_name:
+  corl::package { $base_name:
     resources => {
       build_packages  => {
         name => $haproxy::params::build_package_names
@@ -53,7 +53,7 @@ class haproxy inherits haproxy::params {
 
   #---
 
-  coral::file { $base_name:
+  corl::file { $base_name:
     resources => {
       chroot_dir => {
         path   => $haproxy::params::chroot_dir,
@@ -77,7 +77,7 @@ class haproxy inherits haproxy::params {
 
   #---
 
-  coral::firewall { $base_name:
+  corl::firewall { $base_name:
     resources => haproxy_firewall($config, 'INPUT Allow HAProxy connections'),
     defaults  => {
       action => 'accept',
@@ -90,12 +90,12 @@ class haproxy inherits haproxy::params {
   #-----------------------------------------------------------------------------
   # Actions
 
-  coral::exec { $base_name: }
+  corl::exec { $base_name: }
 
   #-----------------------------------------------------------------------------
   # Services
 
-  coral::service { $base_name:
+  corl::service { $base_name:
     resources => {
       service => {
         name   => $haproxy::params::service_name,
@@ -103,12 +103,12 @@ class haproxy inherits haproxy::params {
         enable => true
       }
     },
-    require => [ Coral::Package[$base_name], Coral::File[$base_name] ]
+    require => [ Corl::Package[$base_name], Corl::File[$base_name] ]
   }
 
   #---
 
-  coral::cron { $base_name:
-    require => Coral::Service[$base_name]
+  corl::cron { $base_name:
+    require => Corl::Service[$base_name]
   }
 }

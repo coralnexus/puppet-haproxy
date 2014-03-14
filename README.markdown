@@ -1,5 +1,5 @@
-## coralnexus-haproxy
+# coralnexus-haproxy
 
-## Overview
+# Overview
 
 This module installs, configures, and manages HAProxy.

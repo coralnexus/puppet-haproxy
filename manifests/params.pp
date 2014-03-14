@@ -1,5 +1,5 @@
 
-class haproxy::params inherits haproxy::default {
+class haproxy::params {
 
   $base_name = 'haproxy'
 

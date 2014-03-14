@@ -8,10 +8,8 @@ module Puppet::Parser::Functions
 This function returns the firewall rules (port / label) needed for a given proxy definition.
     EOS
 ) do |args|
-    Puppet::Parser::Functions.autoloader.loadall
-    function_coral_initialize([])
-    
     rules = {}
+    
     Coral.run do
       raise(Puppet::ParseError, "haproxy_firewall(): Must have a configuration hash (proxies) specified; " +
         "given (#{args.size} for 1)") if args.size < 1
