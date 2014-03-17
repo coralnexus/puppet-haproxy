@@ -22,7 +22,7 @@ class haproxy::params inherits haproxy::default {
     'global' => {
       'daemon' => '',
       'chroot' => $chroot_dir,
-      'user'   => 'haproxy',
+      'user'   => 'root',
       'group'  => 'haproxy',
       'node'   => $::hostname,
       'log'    => {
