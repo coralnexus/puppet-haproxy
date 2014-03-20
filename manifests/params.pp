@@ -23,8 +23,8 @@ class haproxy::params inherits haproxy::default {
       'daemon' => '',
       'chroot' => $chroot_dir,
       'user'   => 'root',
-      'group'  => 'haproxy',
-      'node'   => $::hostname,
+      'group'  => 'root',
+      'node'   => $::fqdn,
       'log'    => {
         '/dev/log' => {
           'local0' => {
