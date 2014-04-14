@@ -65,9 +65,14 @@ class haproxy inherits haproxy::params {
         path    => $haproxy::params::default_config_file,
         content => render($haproxy::params::env_template, $haproxy::params::default_config)
       },
+      config_dir => {
+        path   => $haproxy::params::config_dir,
+        ensure => directory
+      },
       config => {
         path    => $haproxy::params::config_file,
-        content => render($haproxy::params::config_template, $config)
+        content => render($haproxy::params::config_template, $config),
+        require => 'config_dir'
       }
     },
     defaults => {

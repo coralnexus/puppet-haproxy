@@ -12,6 +12,7 @@ class haproxy::params inherits haproxy::default {
 
   #---
 
+  $config_dir      = module_param('config_dir')
   $config_file     = module_param('config_file')
   $config_template = module_param('config_template', 'haproxy')
 

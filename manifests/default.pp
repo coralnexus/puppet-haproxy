@@ -7,7 +7,8 @@ class haproxy::default {
       $service_name            = 'haproxy'
 
       $default_config_file     = '/etc/default/haproxy'
-      $config_file             = '/etc/haproxy/haproxy.cfg'
+      $config_dir              = '/etc/haproxy'
+      $config_file             = "${config_dir}/haproxy.cfg"
 
       $chroot_dir              = '/usr/share/haproxy'
     }
